@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <vector>
-#include <Card.h>
-#include <Deck.h>
+#include "Card.h"
+#include "Deck.h"
 
 using namespace std;
 
@@ -17,6 +17,7 @@ class Player{
     Player(string NameP = "User", bool flag = false){
         Name = NameP;
         isBot = flag;
+        cout<<"Player.h: Player: "<<Name<<" created"<<endl;
     }
 
     bool hasPlayableCard(Card& topcard){
@@ -30,8 +31,9 @@ class Player{
         }
     }
 
-    bool addCard(Card& topcard){
+    void addCard(Card& topcard){
         hand.push_back(topcard);
+        cout<<"Player.h: Card Added: "<<topcard.Convert()<<" added"<<endl;
     }
 
     void PickUpCard(vector<Card>& table){

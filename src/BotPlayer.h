@@ -1,13 +1,14 @@
 #pragma once
 
 #include <iostream>
-#include <Player.h>
-#include <Card.h>
-#include <Deck.h>
+#include "Player.h"
+#include "Card.h"
+#include "Deck.h"
 
 using namespace std;
 
-class BotPlayer : protected Player{
+class BotPlayer : public Player{
+    public:
     BotPlayer(string bot_name = "Bot", bool flag = true){
         Name = bot_name;
         isBot = flag;

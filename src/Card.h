@@ -13,10 +13,11 @@ class Card{
         House = HouseP;
         isPowerCard = valueP == 2 || valueP == 5 || valueP == 10;
     }
+ 
 
     string Convert(){
         string num;
-        if(Value == 1){
+        if(Value == 14){
             num = "Ace";
         }
         else if(Value == 11){
