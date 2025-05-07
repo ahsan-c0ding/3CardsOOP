@@ -17,7 +17,7 @@ class Deck{
     Deck(){
         char suits[] = {'H', 'S', 'D', 'C'};
         for(char suit : suits){
-            for(int i = 1; i < 14; i++){
+            for(int i = 2; i < 15; i++){
                 cards.push_back(Card(i, suit));
             }
         }
