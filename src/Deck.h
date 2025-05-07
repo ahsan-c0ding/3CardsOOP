@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <vector>
-#include <Card.h>
+#include "Card.h"
 #include <random>
 #include <algorithm>
 
@@ -17,7 +17,7 @@ class Deck{
     Deck(){
         char suits[] = {'H', 'S', 'D', 'C'};
         for(char suit : suits){
-            for(int i = 1; i < 14; i++){
+            for(int i = 2; i < 15; i++){
                 cards.push_back(Card(i, suit));
             }
         }
@@ -28,11 +28,13 @@ class Deck{
         random_device rd;
         mt19937 g(rd());
         shuffle(cards.begin(), cards.end(), g);
+        cout<<"Deck.h: Deck Shuffled"<<endl;
     }
 
     Card Draw(){
         Card top = cards.back();
         cards.pop_back();
+        cout<<"Deck.h: Card Drawn"<<endl;
         return top;
     }
 

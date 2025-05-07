@@ -13,29 +13,39 @@ class Card{
         House = HouseP;
         isPowerCard = valueP == 2 || valueP == 5 || valueP == 10;
     }
+ 
 
     string Convert(){
         string num;
-        if(Value == 1){
+        bool isSpace = false; //for formatting purposes only
+        if(Value == 14){
             num = "Ace";
+            isSpace = true;
         }
         else if(Value == 11){
             num = "Jack";
+            isSpace = true;
         }
 
         else if(Value == 12){
             num = "Queen";
+            isSpace = true;
         }
         
         else if(Value == 13){
             num = "King";
+            isSpace = true;
         }
 
         else{
             num = to_string(Value);
         }
-
-        return num + " " + House;
+        if(isSpace){
+            return num + " " + House;
+        } else {
+            return num + House;
+        }
+        
     }
 
     bool isGreater(Card& other){
