@@ -48,6 +48,10 @@ class Card{
         
     }
 
+    int getValue(){
+        return Value;
+    }
+
     bool isGreater(Card& other){
         if(other.Value > Value){
             return true;

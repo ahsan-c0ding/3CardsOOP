@@ -17,7 +17,7 @@ class BotPlayer : public Player{
 
 
     Card PlayCard(Card& topCard) override{  
-        for (int i = 0; i < hand.size(); ++i) {
+        for (size_t i = 0; i < hand.size(); ++i) {
             Card c = hand[i];
             if (c.isGreater(topCard) || c.isPower()) {
                 std::cout << Name << " (Bot) plays " << c.Convert() << "\n";

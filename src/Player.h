@@ -30,7 +30,7 @@ class Player{
 
     bool hasPlayableCard(Card& topcard){
         for(Card card : hand){
-            if(card.isGreater(topcard) || card.isPower()){
+            if(card.getValue() >= topcard.getValue() || card.isPower()){
                 return true;
             }
             else{
@@ -67,7 +67,7 @@ class Player{
         cout<<endl;
 
         cout<<"Select Card Index To Play"<<endl;
-        int choice;
+        size_t choice;
         cin>>choice;
 
         choice = choice - 1;
@@ -78,7 +78,7 @@ class Player{
 
         Card selected = hand[choice];
         
-        if(selected.isGreater(topcard) || selected.isPower()){
+        if(!(selected.isGreater(topcard)) || selected.isPower()){
             hand.erase(hand.begin() + choice);
             return selected;
         }
