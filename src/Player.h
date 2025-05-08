@@ -51,7 +51,7 @@ class Player{
     void PickUpCard(vector<Card>& table){
         hand.insert(hand.begin(), table.begin(), table.end());
         table.clear();
-        for(int i=0; i<hand.size(); i++){
+        for(size_t i=0; i<hand.size(); i++){
             if(hand[i].getValue() == -1){
                 hand.erase(hand.begin() + i); //remove null card when picking up pile
             }

@@ -43,6 +43,7 @@ void initialiseGame(){
 //function to pick pile if no playable card (defacto turn function)
 void checkHandagainstPile(Player &p, vector<Card> &pile){
     if(!p.hasPlayableCard(pile.back())){
+        A:
         cout<<"Player: "<<p.getName()<<" has NO playable card"<<endl;
         cout<<"Main: Pickup Card called"<<endl;
         p.PickUpCard(pile);
@@ -52,6 +53,9 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
         Card temp = nullcard;
         cout<<"Top Card: "<<pile.back().Convert()<<endl;
         temp = p.PlayCard(pile.back());
+        if(temp.getValue() == -1){ // attempted hacky solution to fix weird bot behavior
+            goto A;
+        }
         pile.push_back(temp);
         drawCard(p, cardDeck);
     }
