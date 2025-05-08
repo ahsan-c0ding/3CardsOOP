@@ -28,15 +28,17 @@ class Player{
         }
     }
 
+    string getName(){
+        return Name;
+    }
+
     bool hasPlayableCard(Card& topcard){
         for(Card card : hand){
             if(card.getValue() >= topcard.getValue() || card.isPower()){
                 return true;
             }
-            else{
-                return false;
-            }
         }
+        return false;
     }
 
     //picks from deck
@@ -49,6 +51,12 @@ class Player{
     void PickUpCard(vector<Card>& table){
         hand.insert(hand.begin(), table.begin(), table.end());
         table.clear();
+        for(int i=0; i<hand.size(); i++){
+            if(hand[i].getValue() == -1){
+                hand.erase(hand.begin() + i); //remove null card when picking up pile
+            }
+        }
+        cout<<"Player.h: Pile Picked! "<<endl;
     }
 
     void DisplayCard(){
@@ -65,7 +73,6 @@ class Player{
         while(true){
         DisplayCard();
         cout<<endl;
-
         cout<<"Select Card Index To Play"<<endl;
         size_t choice;
         cin>>choice;
@@ -80,6 +87,7 @@ class Player{
         
         if(!(selected.isGreater(topcard)) || selected.isPower()){
             hand.erase(hand.begin() + choice);
+            cout<<"Player.h: Card Removed "<<selected.Convert()<<endl;
             return selected;
         }
         else{

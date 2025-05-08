@@ -15,8 +15,12 @@ BotPlayer bot2;
 BotPlayer bot3;
 Deck cardDeck; //Deck of Cards
 vector <Card> table; //Pile of cards on table
-Card Usercard(-1, 'A');
-Card Botcard(-1, 'A');
+//Card Usercard = nullcard;
+//Card Botcard = nullcard;
+
+Card nullcard(-1,'X');
+
+
 
 //Function to distribute cards to players at start of the game
 void drawCard(Player& p, Deck& d){
@@ -31,25 +35,52 @@ void initialiseGame(){
     drawCard(bot2, cardDeck);
     drawCard(bot3, cardDeck);
     }
-    Card nullcard(2,'D');
+    
     table.push_back(nullcard);
 }
+
+
+//function to pick pile if no playable card (defacto turn function)
+void checkHandagainstPile(Player &p, vector<Card> &pile){
+    if(!p.hasPlayableCard(pile.back())){
+        cout<<"Player: "<<p.getName()<<" has NO playable card"<<endl;
+        cout<<"Main: Pickup Card called"<<endl;
+        p.PickUpCard(pile);
+        pile.push_back(nullcard);
+    } else{
+        cout<<"Player: "<<p.getName()<<" has playable card"<<endl;
+        Card temp = nullcard;
+        cout<<"Top Card: "<<pile.back().Convert()<<endl;
+        temp = p.PlayCard(pile.back());
+        pile.push_back(temp);
+        drawCard(p, cardDeck);
+    }
+}
+
 
 //runs until player has no card or all bots have no cards
 void gameloop(){
     cout<<"Game Loop Running"<<endl;
     while(user.hasAnyCard() && (bot1.hasAnyCard() || bot2.hasAnyCard() || bot3.hasAnyCard())){
-        //if(!table.size()){
+        /*if(!table.size()){
             Usercard = user.PlayCard(table.back());
             table.push_back(Usercard);
+            cout<<"TESTING VALUE OF TABLE.BACK() = "<<table.back().Convert();
+            drawCard(user, cardDeck);
+            
             Botcard = bot1.PlayCard(table.back());
             table.push_back(Botcard);
+            cout<<"TESTING VALUE OF TABLE.BACK() = "<<table.back().Convert();
+            drawCard(bot1,cardDeck);
         //}
-        //user.PlayCard(table.back());
-       // bot1.PlayCard(table.back());
+        user.PlayCard(table.back());
+       bot1.PlayCard(table.back()); */
+       checkHandagainstPile(user, table);
+       checkHandagainstPile(bot1, table);
     }
     cout<<"Game Loop Ended"<<endl;
 }
+
 
 
 int main(){
