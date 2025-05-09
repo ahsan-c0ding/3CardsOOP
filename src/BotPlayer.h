@@ -12,6 +12,7 @@ class BotPlayer : public Player{
     BotPlayer(string bot_name = "Bot", bool flag = true){
         Name = bot_name;
         isBot = flag;
+        Blinds_Used = false;
         
     }
 

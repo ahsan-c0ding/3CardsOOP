@@ -11,12 +11,15 @@ class Player{
     protected:
     string Name;
     vector <Card> hand;
+    vector <Card> blind;
+    bool Blinds_Used;
     bool isBot;
 
     public:
     Player(string NameP = "User", bool flag = false){
         Name = NameP;
         isBot = flag;
+        Blinds_Used = false;
         cout<<"Player.h: Player: "<<Name<<" created"<<endl;
     }
 
@@ -30,6 +33,10 @@ class Player{
 
     string getName(){
         return Name;
+    }
+
+    bool blindCardsUsed(){
+        return Blinds_Used;
     }
 
     bool hasPlayableCard(Card& topcard, bool& lowerthanfive){
@@ -53,6 +60,11 @@ class Player{
         cout<<"Player.h: Card Added: "<<topcard.Convert()<<" added"<<endl;
     }
 
+    void addBlind(Card& topcard){
+        blind.push_back(topcard);
+        cout<<"Player.h: Blinds Are Added"<<endl;
+    }
+
     //picks from pile
     void PickUpCard(vector<Card>& table){
         hand.insert(hand.begin(), table.begin(), table.end());
@@ -72,6 +84,16 @@ class Player{
         for(Card card : hand){
             cout<<count<<": "<<card.Convert()<<" ";
             count++;
+        }
+    }
+
+    void CallBlind(){
+        Card temp = blind[blind.size() - 1];
+        blind.erase(blind.begin() + (blind.size() - 1));
+        cout<<"Blind Called: Blind Card Removed"<<endl;
+        hand.push_back(temp);
+        if(blind.empty()){
+            Blinds_Used = true;
         }
     }
 

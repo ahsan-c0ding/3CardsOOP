@@ -22,8 +22,18 @@ bool ReverseOrder = false;
 bool lowerthanfive = false;
 
 void drawCard(Player& p, Deck& d){
+    if(d.IsEmpty() == false){
+        Card temp = d.Draw();
+        p.addCard(temp);
+    }
+    else{
+        cout<<"Deck Is Empty"<<endl;
+    }
+}
+
+void drawBlind(Player&p, Deck& d){
     Card temp = d.Draw();
-    p.addCard(temp);
+    p.addBlind(temp);
 }
 
 //Function to distribute cards to players at start of the game
@@ -34,6 +44,13 @@ void initialiseGame(){
     drawCard(bot2, cardDeck);
     drawCard(bot3, cardDeck);
     }
+
+    for(int i = 0; i<3; i++){
+        drawBlind(user, cardDeck);
+        drawBlind(bot1, cardDeck);
+        drawBlind(bot2, cardDeck);
+        drawBlind(bot3, cardDeck);
+    }
     
     table.push_back(nullcard);
 }
@@ -41,13 +58,18 @@ void initialiseGame(){
 
 //function to pick pile if no playable card (defacto turn function)
 void checkHandagainstPile(Player &p, vector<Card> &pile){
+    if(!p.hasAnyCard() && !p.blindCardsUsed()){
+            p.CallBlind();
+        }
+
     if(!p.hasPlayableCard(pile.back(), lowerthanfive)){
         cout<<"Player: "<<p.getName()<<" has NO playable card"<<endl;
         cout<<"Main: Pickup Card called"<<endl;
         p.PickUpCard(pile);
         pile.push_back(nullcard);
+    } 
 
-    } else{
+    else{
         cout<<"Player: "<<p.getName()<<" has playable card"<<endl;
         Card temp = nullcard;
         cout<<"Top Card: "<<pile.back().Convert()<<endl;
@@ -91,7 +113,7 @@ void gameloop(){
 
     vector<Player*> turnOrder = {&user, &bot1, &bot2, &bot3};
     int index = 0;
-    while(user.hasAnyCard() && (bot1.hasAnyCard() || bot2.hasAnyCard() || bot3.hasAnyCard())){
+    while((user.hasAnyCard() || !user.blindCardsUsed()) && (bot1.hasAnyCard() || !bot1.blindCardsUsed()) && (bot2.hasAnyCard() || !bot2.blindCardsUsed()) && (bot3.hasAnyCard() || !bot3.blindCardsUsed())){
         checkHandagainstPile(*turnOrder[index], table);
 
         if (ReverseOrder) {
