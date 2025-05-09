@@ -18,6 +18,9 @@ vector <Card> table; //Pile of cards on table
 
 Card nullcard(-1,'X');
 
+bool ReverseOrder = false;
+bool lowerthanfive = false;
+
 void drawCard(Player& p, Deck& d){
     Card temp = d.Draw();
     p.addCard(temp);
@@ -38,18 +41,46 @@ void initialiseGame(){
 
 //function to pick pile if no playable card (defacto turn function)
 void checkHandagainstPile(Player &p, vector<Card> &pile){
-    if(!p.hasPlayableCard(pile.back())){
+    if(!p.hasPlayableCard(pile.back(), lowerthanfive)){
         cout<<"Player: "<<p.getName()<<" has NO playable card"<<endl;
         cout<<"Main: Pickup Card called"<<endl;
         p.PickUpCard(pile);
         pile.push_back(nullcard);
+
     } else{
         cout<<"Player: "<<p.getName()<<" has playable card"<<endl;
         Card temp = nullcard;
         cout<<"Top Card: "<<pile.back().Convert()<<endl;
-        temp = p.PlayCard(pile.back());
-        pile.push_back(temp);
-        drawCard(p, cardDeck);
+        temp = p.PlayCard(pile.back(), lowerthanfive);
+        if(temp.getValue() == 2){
+            pile.push_back(temp);
+            cout<<"Power Card 2 Played, Play Another Card"<<endl;
+            temp = p.PlayCard(pile.back(), lowerthanfive);
+            pile.push_back(temp);
+            drawCard(p, cardDeck);
+            drawCard(p, cardDeck);
+        }
+
+        else if(temp.getValue() == 10){
+            pile.push_back(temp);
+            pile.clear();
+            cout<<"Pile is Burned"<<endl;
+            pile.push_back(nullcard);
+            drawCard(p, cardDeck);
+        }
+
+        else if(temp.getValue() == 5){
+            pile.push_back(temp);
+            cout<<"Order is Reverse, Next Card Should be Lower than 5"<<endl;
+            ReverseOrder = !ReverseOrder;
+            lowerthanfive = true;
+            drawCard(p, cardDeck);
+        }
+
+        else{
+            pile.push_back(temp);
+            drawCard(p, cardDeck);
+        }
     }
 }
 
@@ -57,9 +88,18 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
 //runs until player has no card or all bots have no cards
 void gameloop(){
     cout<<"Game Loop Running"<<endl;
+
+    vector<Player*> turnOrder = {&user, &bot1, &bot2, &bot3};
+    int index = 0;
     while(user.hasAnyCard() && (bot1.hasAnyCard() || bot2.hasAnyCard() || bot3.hasAnyCard())){
-       checkHandagainstPile(user, table);
-       checkHandagainstPile(bot1, table);
+        checkHandagainstPile(*turnOrder[index], table);
+
+        if (ReverseOrder) {
+            index = (index - 1 + turnOrder.size()) % turnOrder.size();
+        } 
+        else {
+            index = (index + 1) % turnOrder.size();
+        }
     }
     cout<<"Game Loop Ended"<<endl;
 }

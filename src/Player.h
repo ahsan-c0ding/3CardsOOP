@@ -32,10 +32,16 @@ class Player{
         return Name;
     }
 
-    bool hasPlayableCard(Card& topcard){
+    bool hasPlayableCard(Card& topcard, bool& lowerthanfive){
         for(Card card : hand){
-            if(card.getValue() >= topcard.getValue() || card.isPower()){
-                return true;
+            if(lowerthanfive){
+                if((card.getValue() < 5) || card.isPower()){
+                    return true;
+                }
+            } else {
+                if(card.getValue() >= topcard.getValue() || card.isPower()){
+                    return true;
+                }
             }
         }
         return false;
@@ -69,7 +75,7 @@ class Player{
         }
     }
 
-    virtual Card PlayCard(Card& topcard){
+    virtual Card PlayCard(Card& topcard, bool& lowerthanfive){
         while(true){
         DisplayCard();
         cout<<endl;
@@ -85,17 +91,26 @@ class Player{
 
         Card selected = hand[choice];
         
-        if(!(selected.isGreater(topcard)) || selected.isPower()){
-            hand.erase(hand.begin() + choice);
-            cout<<"Player.h: Card Removed "<<selected.Convert()<<endl;
-            return selected;
-        }
-        else{
-            cout<<"Invalid Move, You Cannot Play this card"<<endl;
+        if(lowerthanfive){
+            if(selected.getValue() < 5 || selected.isPower()){
+                hand.erase(hand.begin() + choice);
+                cout<<"Player.h: Card Removed "<<selected.Convert()<<endl;
+                lowerthanfive = !lowerthanfive;
+                return selected;
+            } else {
+                cout<<"Invalid Move. Must play < 5 or Power card."<<endl;
+            }
+        } else {
+            if(!(selected.isGreater(topcard)) || selected.isPower()){
+                hand.erase(hand.begin() + choice);
+                cout<<"Player.h: Card Removed "<<selected.Convert()<<endl;
+                return selected;
+            } else {
+                cout<<"Invalid Move, You Cannot Play this card"<<endl;
+            }
         }
 
         }
-    
     }
 
 };

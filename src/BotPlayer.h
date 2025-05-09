@@ -16,13 +16,22 @@ class BotPlayer : public Player{
     }
 
 
-    Card PlayCard(Card& topCard) override{  
+    Card PlayCard(Card& topCard, bool& lowerthanfive) override{  
         for (size_t i = 0; i < hand.size(); ++i) {
             Card c = hand[i];
-            if (!(c.isGreater(topCard)) || c.isPower()) {
-                std::cout << Name << " (Bot) plays " << c.Convert() << "\n";
-                hand.erase(hand.begin() + i);
-                return c;
+            if(lowerthanfive){
+                if(c.getValue() < 5 || c.isPower()){
+                    std::cout << Name << " (Bot) plays " << c.Convert() << "\n";
+                    hand.erase(hand.begin() + i);
+                    lowerthanfive = !lowerthanfive;
+                    return c;
+                }
+            } else {
+                if (!(c.isGreater(topCard)) || c.isPower()) {
+                    std::cout << Name << " (Bot) plays " << c.Convert() << "\n";
+                    hand.erase(hand.begin() + i);
+                    return c;
+                }
             }
         }
 
