@@ -36,6 +36,11 @@ void drawBlind(Player&p, Deck& d){
     p.addBlind(temp);
 }
 
+void drawSeenBlind(Player&p, Deck& d){
+    Card temp = d.Draw();
+    p.addSeenBlind(temp);
+}
+
 //Function to distribute cards to players at start of the game
 void initialiseGame(){
     for(int i=0; i<3; i++){
@@ -50,6 +55,13 @@ void initialiseGame(){
         drawBlind(bot1, cardDeck);
         drawBlind(bot2, cardDeck);
         drawBlind(bot3, cardDeck);
+    }
+
+    for(int i = 0; i<3; i++){
+        drawSeenBlind(user, cardDeck);
+        drawSeenBlind(bot1, cardDeck);
+        drawSeenBlind(bot2, cardDeck);
+        drawSeenBlind(bot3, cardDeck);
     }
     
     table.push_back(nullcard);
@@ -104,6 +116,7 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
             drawCard(p, cardDeck);
         }
     }
+    p.PickSeenBlinds();
 }
 
 

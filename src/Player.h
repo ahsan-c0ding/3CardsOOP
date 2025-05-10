@@ -12,6 +12,7 @@ class Player{
     string Name;
     vector <Card> hand;
     vector <Card> blind;
+    vector <Card> Seenblind;
     bool Blinds_Used;
     bool isBot;
 
@@ -65,6 +66,11 @@ class Player{
         cout<<"Player.h: Blinds Are Added"<<endl;
     }
 
+    void addSeenBlind(Card& topcard){
+        Seenblind.push_back(topcard);
+        cout<<"Player.h: Seen Blinds Are Added"<<endl;
+    }
+
     //picks from pile
     void PickUpCard(vector<Card>& table){
         hand.insert(hand.begin(), table.begin(), table.end());
@@ -76,6 +82,19 @@ class Player{
         }
         cout<<"Player.h: Pile Picked! "<<endl;
     }
+
+//seen blinds pickup logic:
+    void PickSeenBlinds(){
+        if(hand.size() == 2 && Seenblind.size() > 0){
+            while(!Seenblind.empty()){
+                hand.push_back(Seenblind.back());
+                Seenblind.pop_back();
+            }
+            cout<<"Player.h: Seen Blinds Picked!"<<endl;
+        }
+    }
+
+
 
     void DisplayCard(){
         cout<<endl;
@@ -131,8 +150,8 @@ class Player{
                 cout<<"Invalid Move, You Cannot Play this card"<<endl;
             }
         }
-
         }
+        
     }
 
 };
