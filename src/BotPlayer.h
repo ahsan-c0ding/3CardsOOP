@@ -17,7 +17,7 @@ class BotPlayer : public Player{
     }
 
 
-    Card PlayCard(Card& topCard, bool& lowerthanfive) override{  
+    Card PlayCard(Card& topCard, bool& lowerthanfive) override{ 
         for (size_t i = 0; i < hand.size(); ++i) {
             Card c = hand[i];
             if(lowerthanfive){

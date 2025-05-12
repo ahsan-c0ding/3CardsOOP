@@ -125,47 +125,74 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
 
 //runs until player has no card or all bots have no cards
 void gameloop(){
-    cout<<"Game Loop Running"<<endl;
+    cout << "Game Loop Running" << endl;
 
-    vector<Player*> turnOrder = {&user, &bot1, &bot2, &bot3};
-    int index = 0;
-    while((user.hasAnyCard() || !user.blindCardsUsed()) && (bot1.hasAnyCard() || !bot1.blindCardsUsed()) && (bot2.hasAnyCard() || !bot2.blindCardsUsed()) && (bot3.hasAnyCard() || !bot3.blindCardsUsed())){
-        checkHandagainstPile(*turnOrder[index], table);
+    vector<Player*> turnOrder = {&user, &bot1, &bot2, &bot3};  // Player turn order
+    static int index = 0;  // Track current player's index in turn order
+
+    // Process one player's turn per frame
+    if (!WindowShouldClose() &&
+        (user.hasAnyCard() || !user.blindCardsUsed()) &&
+        (bot1.hasAnyCard() || !bot1.blindCardsUsed()) &&
+        (bot2.hasAnyCard() || !bot2.blindCardsUsed()) &&
+        (bot3.hasAnyCard() || !bot3.blindCardsUsed())) {
+
+        // Process the current player's turn
+        Player* currentPlayer = turnOrder[index];
+        if (turnOrder[index] == &bot1 || turnOrder[index] == &bot2 || turnOrder[index] == &bot3) {
+            WaitTime(0.2); // Bot delay here
+        }
+
+        // Only clear the background if it's the human player's turn.
+        if (currentPlayer == &user) {
+            ClearBackground(RAYWHITE);  // Clear the background when human plays
+        } else {
+            // Keep the background the same if it's a bot's turn
+            DrawText("Bot's turn", 20, 20, 20, DARKGRAY);  // Show which bot is playing
+        }
+
+        checkHandagainstPile(*currentPlayer, table);  // Let the player act (draw cards, play, etc.)
+
+        // Advance to the next player
         if (ReverseOrder) {
             index = (index - 1 + turnOrder.size()) % turnOrder.size();
-        } 
-        else {
+        } else {
             index = (index + 1) % turnOrder.size();
         }
+    } else {
+        // Handle game end scenario
+        cout << "Game Over!" << endl;
     }
-    cout<<"Game Loop Ended"<<endl;
 }
+
+
 
 
 
 int main(){
-    cout<<"Hello World!"<<endl;
+    cout << "Hello World!" << endl;
+
+    // Initialization
     SetTargetFPS(60);
     InitWindow(screenWidth, screenHeight, "Teen Patti");
 
-    initialiseGame();
-    cout<<endl;
+    initialiseGame();  // Initial card distribution, game setup
+    cout << endl;
 
+    // Main Game Loop
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground(RAYWHITE);
 
         DrawText("Teen Patti Game Running...", 20, 20, 20, DARKGRAY);
 
-        
+        gameloop();  // One player's turn per frame
 
-        gameloop(); // This now includes rendering and input handling
-        EndDrawing();
-        break; // Exit after game ends
+        EndDrawing();  // End drawing for this frame
     }
 
-    CloseWindow();
+    CloseWindow();  // Close the window when done
 
     return 0;
 }
+
 
