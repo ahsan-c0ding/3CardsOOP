@@ -70,6 +70,9 @@ void initialiseGame(){
 
 //function to pick pile if no playable card (defacto turn function)
 void checkHandagainstPile(Player &p, vector<Card> &pile){
+    if(!pile.empty()){
+        p.drawPile(pile.back());
+    }
     if(!p.hasAnyCard() && !p.blindCardsUsed()){
             p.CallBlind();
         }
@@ -128,7 +131,6 @@ void gameloop(){
     int index = 0;
     while((user.hasAnyCard() || !user.blindCardsUsed()) && (bot1.hasAnyCard() || !bot1.blindCardsUsed()) && (bot2.hasAnyCard() || !bot2.blindCardsUsed()) && (bot3.hasAnyCard() || !bot3.blindCardsUsed())){
         checkHandagainstPile(*turnOrder[index], table);
-
         if (ReverseOrder) {
             index = (index - 1 + turnOrder.size()) % turnOrder.size();
         } 
@@ -148,7 +150,21 @@ int main(){
 
     initialiseGame();
     cout<<endl;
-    gameloop();
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        DrawText("Teen Patti Game Running...", 20, 20, 20, DARKGRAY);
+
+        
+
+        gameloop(); // This now includes rendering and input handling
+        EndDrawing();
+        break; // Exit after game ends
+    }
+
+    CloseWindow();
 
     return 0;
 }

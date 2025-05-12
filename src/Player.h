@@ -94,7 +94,26 @@ class Player{
         }
     }
 
+    void drawPile(Card topCard){
+        // --- Draw top card from the pile in the center ---
+    if (!(topCard.getValue() == -1 )) {
+        const int pileCardWidth = 120;
+        const int pileCardHeight = 160;
+        float pileX = GetScreenWidth() / 2 - pileCardWidth / 2;
+        float pileY = GetScreenHeight() / 2 - pileCardHeight / 2;
 
+        Rectangle pileCardRect = { pileX, pileY, (float)pileCardWidth, (float)pileCardHeight };
+        DrawRectangleRec(pileCardRect, GOLD);
+        DrawRectangleLinesEx(pileCardRect, 3, DARKGRAY);
+
+        string pileLabel = "Top: " + topCard.Convert();
+        DrawText(pileLabel.c_str(),
+                pileX + 10,
+                pileY + pileCardHeight / 2 - 10,
+                20,
+                BLACK);
+    }
+    }
 
     void DisplayCard(){
         cout<<endl;
@@ -116,42 +135,82 @@ class Player{
         }
     }
 
-    virtual Card PlayCard(Card& topcard, bool& lowerthanfive){
-        while(true){
-        DisplayCard();
-        cout<<endl;
-        cout<<"Select Card Index To Play"<<endl;
-        size_t choice;
-        cin>>choice;
+    virtual Card PlayCard(Card& topcard, bool& lowerthanfive) {
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
 
-        choice = choice - 1;
-        if(choice < 0 || choice >= hand.size()){
-            cout<<"Invalid Choice, Try Again"<<endl;
-            continue;
+        DrawText(("Player: " + Name).c_str(), 20, 20, 20, BLACK);
+        DrawText("Click a card to play it", 20, 50, 20, DARKGRAY);
+
+        // 👉 CALL drawPile() to show the current top card
+        drawPile(topcard);
+
+        const int cardWidth = 80;
+        const int cardHeight = 120;
+        const int padding = 20;
+        int startX = (GetScreenWidth() - (hand.size() * (cardWidth + padding))) / 2;
+        int y = GetScreenHeight() - cardHeight - 40;
+
+        for (size_t i = 0; i < hand.size(); ++i) {
+            Rectangle cardRect = {
+                (float)(startX + i * (cardWidth + padding)),
+                (float)y,
+                (float)cardWidth,
+                (float)cardHeight
+            };
+
+            DrawRectangleRec(cardRect, LIGHTGRAY);
+            DrawRectangleLinesEx(cardRect, 2, BLACK);
+
+            // Dynamically scale the card label text and center it
+string label = hand[i].Convert();
+int maxWidth = cardWidth - 20;
+int fontSize = 20;
+
+// Shrink text if it’s too wide
+while (MeasureText(label.c_str(), fontSize) > maxWidth && fontSize > 10) {
+    fontSize--;
+}
+
+// Center horizontally and vertically
+int textWidth = MeasureText(label.c_str(), fontSize);
+float textX = cardRect.x + (cardWidth - textWidth) / 2;
+float textY = cardRect.y + (cardHeight - fontSize) / 2;
+
+DrawText(label.c_str(), textX, textY, fontSize, BLACK);
+
+
+
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), cardRect)) {
+                Card selected = hand[i];
+
+                bool valid = false;
+                if (lowerthanfive) {
+                    valid = selected.getValue() < 5 || selected.isPower();
+                } else {
+                    valid = selected.getValue() >= topcard.getValue() || selected.isPower();
+                }
+
+                if (valid) {
+                    hand.erase(hand.begin() + i);
+                    cout << "Player.h: Card Removed " << selected.Convert() << endl;
+
+                    if (lowerthanfive) lowerthanfive = false;
+                    EndDrawing();
+                    return selected;
+                } else {
+                    DrawText("Invalid move!", 20, 80, 20, RED);
+                }
+            }
         }
 
-        Card selected = hand[choice];
-        
-        if(lowerthanfive){
-            if(selected.getValue() < 5 || selected.isPower()){
-                hand.erase(hand.begin() + choice);
-                cout<<"Player.h: Card Removed "<<selected.Convert()<<endl;
-                lowerthanfive = !lowerthanfive;
-                return selected;
-            } else {
-                cout<<"Invalid Move. Must play < 5 or Power card."<<endl;
-            }
-        } else {
-            if(!(selected.isGreater(topcard)) || selected.isPower()){
-                hand.erase(hand.begin() + choice);
-                cout<<"Player.h: Card Removed "<<selected.Convert()<<endl;
-                return selected;
-            } else {
-                cout<<"Invalid Move, You Cannot Play this card"<<endl;
-            }
-        }
-        }
-        
+        EndDrawing();
     }
+
+    return Card(-1, 'X');
+}
+
+
 
 };
