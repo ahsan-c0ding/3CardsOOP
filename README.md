@@ -39,3 +39,5 @@ A graphical version of the popular Pakistani card game **Teen Patti**, built in 
 
 ```bash
 g++ main.cpp Card.cpp Deck.cpp Player.cpp BotPlayer.cpp -o TeenPatti -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+
+<pre><code>## 📁 File Structure ``` ├── main.cpp # Entry point and game loop ├── Card.h # Declaration of Card class ├── Card.cpp # Implementation of Card methods ├── Deck.h # Declaration of Deck class ├── Deck.cpp # Implementation of Deck methods ├── Player.h # Base Player class declaration ├── Player.cpp # Player class methods ├── BotPlayer.h # BotPlayer derived class declaration ├── BotPlayer.cpp # BotPlayer AI logic ├── assets/ # (Optional) Folder for images/sounds if used └── README.md # Project documentation ``` </code></pre>
