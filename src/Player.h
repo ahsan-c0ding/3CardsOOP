@@ -4,6 +4,7 @@
 #include <vector>
 #include "Card.h"
 #include "Deck.h"
+#include "Texture.h"
 
 using namespace std;
 
@@ -94,26 +95,23 @@ class Player{
         }
     }
 
-    void drawPile(Card topCard){
-        // --- Draw top card from the pile in the center ---
-    if (!(topCard.getValue() == -1 )) {
-        const int pileCardWidth = 120;
-        const int pileCardHeight = 160;
-        float pileX = GetScreenWidth() / 2 - pileCardWidth / 2;
-        float pileY = GetScreenHeight() / 2 - pileCardHeight / 2;
+    void drawPile(Card topCard, TextureManager& textureManager) {
+        if (topCard.getValue() == -1) return;
 
-        Rectangle pileCardRect = { pileX, pileY, (float)pileCardWidth, (float)pileCardHeight };
-        DrawRectangleRec(pileCardRect, GOLD);
-        DrawRectangleLinesEx(pileCardRect, 3, DARKGRAY);
+        const int cardWidth = 120;
+        const int cardHeight = 160;
+        float pileX = GetScreenWidth() / 2 - cardWidth / 2;
+        float pileY = GetScreenHeight() / 2 - cardHeight / 2;
 
-        string pileLabel = "Top: " + topCard.Convert();
-        DrawText(pileLabel.c_str(),
-                pileX + 10,
-                pileY + pileCardHeight / 2 - 10,
-                20,
-                BLACK);
+        std::string cardId = topCard.Convert();
+        Texture2D tex = textureManager.Get(cardId);
+
+        Rectangle source = { 0, 0, (float)tex.width, (float)tex.height };
+        Rectangle dest = { pileX, pileY, (float)cardWidth, (float)cardHeight };
+        Vector2 origin = { 0, 0 };
+        DrawTexturePro(tex, source, dest, origin, 0.0f, WHITE);
     }
-    }
+
 
     void DisplayCard(){
         cout<<endl;
@@ -135,7 +133,7 @@ class Player{
         }
     }
 
-    virtual Card PlayCard(Card& topcard, bool& lowerthanfive) {
+    virtual Card PlayCard(Card& topcard, bool& lowerthanfive, TextureManager& textureManager) {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -144,7 +142,7 @@ class Player{
         DrawText("Click a card to play it", 20, 50, 20, DARKGRAY);
 
         // 👉 CALL drawPile() to show the current top card
-        drawPile(topcard);
+        drawPile(topcard, textureManager);
 
         const int cardWidth = 80;
         const int cardHeight = 120;
@@ -160,28 +158,26 @@ class Player{
                 (float)cardHeight
             };
 
-            DrawRectangleRec(cardRect, LIGHTGRAY);
-            DrawRectangleLinesEx(cardRect, 2, BLACK);
+            std::string cardId = hand[i].Convert();
+            Texture2D tex = textureManager.Get(cardId);
+
+            Rectangle source = { 0, 0, (float)tex.width, (float)tex.height };
+            Rectangle dest = { cardRect.x, cardRect.y, (float)cardWidth, (float)cardHeight };
+            Vector2 origin = { 0, 0 };
+
+            DrawTexturePro(tex, source, dest, origin, 0.0f, WHITE);
 
             // Dynamically scale the card label text and center it
-string label = hand[i].Convert();
-int maxWidth = cardWidth - 20;
-int fontSize = 20;
+            string label = hand[i].Convert();
+            int maxWidth = cardWidth - 20;
+            int fontSize = 20;
 
-// Shrink text if it’s too wide
-while (MeasureText(label.c_str(), fontSize) > maxWidth && fontSize > 10) {
-    fontSize--;
-}
+            // Shrink text if it’s too wide
+            while (MeasureText(label.c_str(), fontSize) > maxWidth && fontSize > 10) {
+                fontSize--;
+            }
 
-// Center horizontally and vertically
-int textWidth = MeasureText(label.c_str(), fontSize);
-float textX = cardRect.x + (cardWidth - textWidth) / 2;
-float textY = cardRect.y + (cardHeight - fontSize) / 2;
-
-DrawText(label.c_str(), textX, textY, fontSize, BLACK);
-
-
-
+          
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), cardRect)) {
                 Card selected = hand[i];
 

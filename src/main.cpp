@@ -4,9 +4,14 @@ using namespace std;
 #include "Card.h"
 #include "Player.h"
 #include "BotPlayer.h"
+#include "Texture.h"
 
 int screenWidth = 800;
 int screenHeight = 600;
+
+TextureManager textureManager;
+
+
 
 //Intialising Players
 Player user("Human User",false);
@@ -41,6 +46,7 @@ void drawSeenBlind(Player&p, Deck& d){
     p.addSeenBlind(temp);
 }
 
+
 //Function to distribute cards to players at start of the game
 void initialiseGame(){
     for(int i=0; i<3; i++){
@@ -71,7 +77,7 @@ void initialiseGame(){
 //function to pick pile if no playable card (defacto turn function)
 void checkHandagainstPile(Player &p, vector<Card> &pile){
     if(!pile.empty()){
-        p.drawPile(pile.back());
+        p.drawPile(pile.back(), textureManager);
     }
     if(!p.hasAnyCard() && !p.blindCardsUsed()){
             p.CallBlind();
@@ -88,11 +94,11 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
         cout<<"Player: "<<p.getName()<<" has playable card"<<endl;
         Card temp = nullcard;
         cout<<"Top Card: "<<pile.back().Convert()<<endl;
-        temp = p.PlayCard(pile.back(), lowerthanfive);
+        temp = p.PlayCard(pile.back(), lowerthanfive, textureManager);
         if(temp.getValue() == 2){
             pile.push_back(temp);
             cout<<"Power Card 2 Played, Play Another Card"<<endl;
-            temp = p.PlayCard(pile.back(), lowerthanfive);
+            temp = p.PlayCard(pile.back(), lowerthanfive, textureManager);
             pile.push_back(temp);
             drawCard(p, cardDeck);
             drawCard(p, cardDeck);
@@ -175,6 +181,8 @@ int main(){
     // Initialization
     SetTargetFPS(60);
     InitWindow(screenWidth, screenHeight, "Teen Patti");
+    
+    textureManager.LoadCardTextures("cards/");
 
     initialiseGame();  // Initial card distribution, game setup
     cout << endl;
