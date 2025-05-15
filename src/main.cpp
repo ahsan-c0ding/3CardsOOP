@@ -96,41 +96,49 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
         cout<<"Player: "<<p.getName()<<" has playable card"<<endl;
         Card temp = nullcard;
         cout<<"Top Card: "<<pile.back().Convert()<<endl;
-        temp = p.PlayCard(pile.back(), lowerthanfive, textureManager);
-        if(temp.getValue() == 2){
-            pile.push_back(temp);
-            cout<<"Power Card 2 Played, Play Another Card"<<endl;
-            p.ShowNotification("Power Card 2 Played, Play Another Card");
-            temp = p.PlayCard(pile.back(), lowerthanfive, textureManager);
-            pile.push_back(temp);
-            drawCard(p, cardDeck);
-            drawCard(p, cardDeck);
-        }
+        while (true) {
+    temp = p.PlayCard(pile.back(), lowerthanfive, textureManager);
 
-        else if(temp.getValue() == 10){
-            pile.push_back(temp);
-            pile.clear();
-            cout<<"Pile is Burned"<<endl;
-            p.ShowNotification("Pile is Burned");
-            pile.push_back(nullcard);
-            drawCard(p, cardDeck);
-        }
-
-        else if(temp.getValue() == 5){
-            pile.push_back(temp);
-            cout<<"Order is Reverse, Next Card Should be Lower than 5"<<endl;
-            p.ShowNotification("Order is Reverse, Next Card Should be Lower than 5");
-            ReverseOrder = !ReverseOrder;
-            lowerthanfive = true;
-            drawCard(p, cardDeck);
-        }
-
-        else{
-            pile.push_back(temp);
-            drawCard(p, cardDeck);
-        }
+    if (temp.getValue() == -1) {
+        // No card played (or invalid), exit loop
+        break;
     }
+
+    pile.push_back(temp);
+
+    if (temp.getValue() == 2) {
+        cout << "Power Card 2 Played, Play Another Card" << endl;
+        p.ShowNotification("Power Card 2 Played, Play Another Card");
+        drawCard(p, cardDeck);
+        drawCard(p, cardDeck);
+        continue; // Allow another card to be played
+    }
+
+    if (temp.getValue() == 10) {
+        cout << "Pile is Burned" << endl;
+        p.ShowNotification("Pile is Burned");
+        pile.clear();
+        pile.push_back(nullcard);
+        drawCard(p, cardDeck);
+        break;
+    }
+
+    if (temp.getValue() == 5) {
+        cout << "Order is Reverse, Next Card Should be Lower than 5" << endl;
+        p.ShowNotification("Order is Reverse, Next Card Should be Lower than 5");
+        ReverseOrder = !ReverseOrder;
+        lowerthanfive = true;
+        drawCard(p, cardDeck);
+        break;
+    }
+
+    // If it's a normal card, just draw one and end turn
+    drawCard(p, cardDeck);
+    break;
+}
+
     p.PickSeenBlinds();
+}
 }
 
 
