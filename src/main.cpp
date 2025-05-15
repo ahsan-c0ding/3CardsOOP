@@ -33,6 +33,7 @@ void drawCard(Player& p, Deck& d){
     }
     else{
         cout<<"Deck Is Empty"<<endl;
+        p.ShowNotification("Deck Is Empty");
     }
 }
 
@@ -85,6 +86,7 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
 
     if(!p.hasPlayableCard(pile.back(), lowerthanfive)){
         cout<<"Player: "<<p.getName()<<" has NO playable card"<<endl;
+        p.ShowNotification("Player: "+p.getName()+" has NO playable card");
         cout<<"Main: Pickup Card called"<<endl;
         p.PickUpCard(pile);
         pile.push_back(nullcard);
@@ -98,6 +100,7 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
         if(temp.getValue() == 2){
             pile.push_back(temp);
             cout<<"Power Card 2 Played, Play Another Card"<<endl;
+            p.ShowNotification("Power Card 2 Played, Play Another Card");
             temp = p.PlayCard(pile.back(), lowerthanfive, textureManager);
             pile.push_back(temp);
             drawCard(p, cardDeck);
@@ -108,6 +111,7 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
             pile.push_back(temp);
             pile.clear();
             cout<<"Pile is Burned"<<endl;
+            p.ShowNotification("Pile is Burned");
             pile.push_back(nullcard);
             drawCard(p, cardDeck);
         }
@@ -115,6 +119,7 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
         else if(temp.getValue() == 5){
             pile.push_back(temp);
             cout<<"Order is Reverse, Next Card Should be Lower than 5"<<endl;
+            p.ShowNotification("Order is Reverse, Next Card Should be Lower than 5");
             ReverseOrder = !ReverseOrder;
             lowerthanfive = true;
             drawCard(p, cardDeck);
@@ -146,7 +151,7 @@ void gameloop(){
         // Process the current player's turn
         Player* currentPlayer = turnOrder[index];
         if (turnOrder[index] == &bot1 || turnOrder[index] == &bot2 || turnOrder[index] == &bot3) {
-            WaitTime(0.2); // Bot delay here
+            WaitTime(0.5); // Bot delay here
         }
 
         // Only clear the background if it's the human player's turn.
@@ -189,13 +194,9 @@ int main(){
 
     // Main Game Loop
     while (!WindowShouldClose()) {
-        BeginDrawing();
-
-        DrawText("Teen Patti Game Running...", 20, 20, 20, DARKGRAY);
 
         gameloop();  // One player's turn per frame
 
-        EndDrawing();  // End drawing for this frame
     }
 
     CloseWindow();  // Close the window when done

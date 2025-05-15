@@ -16,6 +16,9 @@ class Player{
     vector <Card> Seenblind;
     bool Blinds_Used;
     bool isBot;
+    string notificationMessage = "";
+    float notificationStartTime = 0.0f;
+    float notificationDuration = 2.0f; // show for 2 seconds
 
     public:
     Player(string NameP = "User", bool flag = false){
@@ -35,6 +38,28 @@ class Player{
 
     string getName(){
         return Name;
+    }
+
+    void ShowNotification(const string& msg) {
+        notificationMessage = msg;
+        notificationStartTime = GetTime();
+    }
+
+    void DrawNotification() {
+    if (!notificationMessage.empty() && (GetTime() - notificationStartTime < notificationDuration)) {
+            int fontSize = 25;
+            int padding = 10;
+
+            int textWidth = MeasureText(notificationMessage.c_str(), fontSize);
+            int x = GetScreenWidth() - textWidth - padding * 2;
+            int y = padding;
+
+            // Background rectangle
+            DrawRectangle(x - padding, y - padding / 2, textWidth + padding * 2, fontSize + padding, Fade(DARKGRAY, 0.8f));
+            
+            // Text
+            DrawText(notificationMessage.c_str(), x, y, fontSize, RAYWHITE);
+        }
     }
 
     bool blindCardsUsed(){
@@ -57,14 +82,15 @@ class Player{
     }
 
     //picks from deck
-    void addCard(Card& topcard){
+    void virtual addCard(Card& topcard){
         hand.push_back(topcard);
-        cout<<"Player.h: Card Added: "<<topcard.Convert()<<" added"<<endl;
+        string c = topcard.Convert();
+        string text = Name + " picked up card: " + c; 
+        ShowNotification(text);
     }
 
     void addBlind(Card& topcard){
         blind.push_back(topcard);
-        cout<<"Player.h: Blinds Are Added"<<endl;
     }
 
     void addSeenBlind(Card& topcard){
@@ -81,17 +107,17 @@ class Player{
                 hand.erase(hand.begin() + i); //remove null card when picking up pile
             }
         }
-        cout<<"Player.h: Pile Picked! "<<endl;
+        ShowNotification(Name+" Pile Picked");
     }
 
 //seen blinds pickup logic:
     void PickSeenBlinds(){
-        if(hand.size() == 2 && Seenblind.size() > 0){
+        if(hand.size() == 0 && Seenblind.size() > 0){
             while(!Seenblind.empty()){
                 hand.push_back(Seenblind.back());
                 Seenblind.pop_back();
             }
-            cout<<"Player.h: Seen Blinds Picked!"<<endl;
+            ShowNotification(Name+ " Seen Blinds Picked");
         }
     }
 
@@ -126,7 +152,7 @@ class Player{
     void CallBlind(){
         Card temp = blind[blind.size() - 1];
         blind.erase(blind.begin() + (blind.size() - 1));
-        cout<<"Blind Called: Blind Card Removed"<<endl;
+        ShowNotification("Blind Called, Blind Cards Removed");
         hand.push_back(temp);
         if(blind.empty()){
             Blinds_Used = true;
@@ -190,7 +216,8 @@ class Player{
 
                 if (valid) {
                     hand.erase(hand.begin() + i);
-                    cout << "Player.h: Card Removed " << selected.Convert() << endl;
+                    string c = selected.Convert();
+                    ShowNotification(Name+ " Card Removed: "+c);
 
                     if (lowerthanfive) lowerthanfive = false;
                     EndDrawing();
@@ -200,7 +227,7 @@ class Player{
                 }
             }
         }
-
+        DrawNotification();
         EndDrawing();
     }
 
