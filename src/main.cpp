@@ -13,6 +13,8 @@ TextureManager textureManager;
 
 
 
+
+
 //Intialising Players
 Player user("Human User",false);
 BotPlayer bot1;
@@ -25,6 +27,25 @@ Card nullcard(-1,'X');
 
 bool ReverseOrder = false;
 bool lowerthanfive = false;
+
+struct SoundManager {
+    Sound click_success;
+    Sound click_fail;
+
+    void Load() {
+        click_success = LoadSound("audio/click_sucess.wav");
+        click_fail = LoadSound("audio/click_failed.wav");
+    }
+
+    void Unload() {
+        UnloadSound(click_success);
+        UnloadSound(click_fail);
+    }
+};
+
+SoundManager soundManager;
+
+
 
 void drawCard(Player& p, Deck& d){
     if(d.IsEmpty() == false){
@@ -97,7 +118,14 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
         Card temp = nullcard;
         cout<<"Top Card: "<<pile.back().Convert()<<endl;
         while (true) {
-    temp = p.PlayCard(pile.back(), lowerthanfive, textureManager);
+        temp = p.PlayCard(pile.back(), lowerthanfive, textureManager);
+        if(!(p.getIsBot())){
+            if(p.getMove_Sucess()){
+                PlaySound(soundManager.click_success);
+            } else{
+                PlaySound(soundManager.click_fail);
+            }
+        }
 
     if (temp.getValue() == -1) {
         // No card played (or invalid), exit loop
@@ -194,7 +222,10 @@ int main(){
     // Initialization
     SetTargetFPS(60);
     InitWindow(screenWidth, screenHeight, "Teen Patti");
-    
+    InitAudioDevice();
+    SetMasterVolume(1.0f);  // Full volume
+    soundManager.Load();
+
     textureManager.LoadCardTextures("cards/");
 
     initialiseGame();  // Initial card distribution, game setup
@@ -207,6 +238,8 @@ int main(){
 
     }
 
+    soundManager.Unload();
+    CloseAudioDevice();
     CloseWindow();  // Close the window when done
 
     return 0;

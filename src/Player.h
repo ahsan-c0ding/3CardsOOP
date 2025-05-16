@@ -8,6 +8,9 @@
 
 using namespace std;
 
+
+
+
 class Player{
     protected:
     string Name;
@@ -19,6 +22,7 @@ class Player{
     string notificationMessage = "";
     float notificationStartTime = 0.0f;
     float notificationDuration = 2.0f; // show for 2 seconds
+    bool move_sucess;
 
     public:
     Player(string NameP = "User", bool flag = false){
@@ -28,12 +32,19 @@ class Player{
         cout<<"Player.h: Player: "<<Name<<" created"<<endl;
     }
 
+    bool getMove_Sucess(){
+        return move_sucess;
+    }
+
     bool hasAnyCard(){
         if (hand.size() == 0){
             return false;
         } else {
             return true;
         }
+    }
+    bool getIsBot(){
+        return isBot;
     }
 
     string getName(){
@@ -160,6 +171,7 @@ class Player{
     }
 
     virtual Card PlayCard(Card& topcard, bool& lowerthanfive, TextureManager& textureManager) {
+    move_sucess = false;
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -218,12 +230,14 @@ class Player{
                     hand.erase(hand.begin() + i);
                     string c = selected.Convert();
                     ShowNotification(Name+ " Card Removed: "+c);
+                    move_sucess = true;
 
                     if (lowerthanfive) lowerthanfive = false;
                     EndDrawing();
                     return selected;
                 } else {
                     DrawText("Invalid move!", 20, 80, 20, RED);
+                    move_sucess = false;
                 }
             }
         }
