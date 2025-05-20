@@ -33,6 +33,10 @@ class BotPlayer : public Player{
             ShowNotification(Name + " (Bot) plays " + c.Convert());
             hand.erase(hand.begin() + i);
 
+
+            topCard = c; //update top card if valid card played
+            soundManager.playPlaced(); //to fix sound desync issue
+
             // Show notification briefly
             float startTime = GetTime();
             while (GetTime() - startTime < 1.5f && !WindowShouldClose()) {
@@ -41,12 +45,13 @@ class BotPlayer : public Player{
                 
                 drawPile(topCard, textureManager);
                 DrawNotification(); // <-- Draw bot's move notification
+                
 
                 EndDrawing();
             }
 
             if (lowerthanfive) lowerthanfive = false;
-            soundManager.playPlaced();
+            
             return c;
             
         }
