@@ -12,9 +12,11 @@ A graphical version of the popular Pakistani card game **Teen Patti**, built in 
   - **5** – Reverse order; next card must be less than 5.
   - **10** – Burns the pile.
 
-- Hand, blind, and seen-blind card logic.
-- Graphical card display using Raylib.
-- Bot decision-making with a delay to simulate realism.
+- ♠️ Hand, blind, and seen-blind card logic.
+- 🎨 Raylib-powered graphics for rendering cards, piles, and UI notifications
+- 🤖 Intelligent `BotPlayer` that plays valid moves based on game rules
+- 🔊 Sound effects for card plays
+- 🔔 Real-time on-screen notifications of bot moves
 
 ## 🎮 How to Play
 
