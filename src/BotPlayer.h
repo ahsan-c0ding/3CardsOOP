@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Card.h"
 #include "Deck.h"
+#include "Sound.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ class BotPlayer : public Player{
     }
 
 
-    Card PlayCard(Card& topCard, bool& lowerthanfive, TextureManager& textureManager) override {
+    Card PlayCard(Card& topCard, bool& lowerthanfive, TextureManager& textureManager, SoundManager& soundManager) override {
     for (size_t i = 0; i < hand.size(); ++i) {
         Card c = hand[i];
         bool valid = lowerthanfive ? (c.getValue() < 5 || c.isPower()) : (c.getValue() >= topCard.getValue() || c.isPower());
@@ -45,7 +46,9 @@ class BotPlayer : public Player{
             }
 
             if (lowerthanfive) lowerthanfive = false;
+            soundManager.playPlaced();
             return c;
+            
         }
     }
 

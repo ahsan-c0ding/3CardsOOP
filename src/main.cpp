@@ -5,13 +5,14 @@ using namespace std;
 #include "Player.h"
 #include "BotPlayer.h"
 #include "Texture.h"
+#include "Sound.h"
 
 int screenWidth = 800;
 int screenHeight = 600;
 
 TextureManager textureManager;
 
-
+SoundManager soundManager;
 
 
 
@@ -28,22 +29,7 @@ Card nullcard(-1,'X');
 bool ReverseOrder = false;
 bool lowerthanfive = false;
 
-struct SoundManager {
-    Sound click_success;
-    Sound click_fail;
 
-    void Load() {
-        click_success = LoadSound("audio/click_sucess.wav");
-        click_fail = LoadSound("audio/click_failed.wav");
-    }
-
-    void Unload() {
-        UnloadSound(click_success);
-        UnloadSound(click_fail);
-    }
-};
-
-SoundManager soundManager;
 
 
 
@@ -67,6 +53,11 @@ void drawSeenBlind(Player&p, Deck& d){
     Card temp = d.Draw();
     p.addSeenBlind(temp);
 }
+
+bool isOutOfCards(Player& p) {
+    return !p.hasAnyCard() && p.blindCardsUsed() && !p.gethasSeenBlinds();
+}
+
 
 
 //Function to distribute cards to players at start of the game
@@ -118,14 +109,7 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
         Card temp = nullcard;
         cout<<"Top Card: "<<pile.back().Convert()<<endl;
         while (true) {
-        temp = p.PlayCard(pile.back(), lowerthanfive, textureManager);
-        if(!(p.getIsBot())){
-            if(p.getMove_Sucess()){
-                PlaySound(soundManager.click_success);
-            } else{
-                PlaySound(soundManager.click_fail);
-            }
-        }
+        temp = p.PlayCard(pile.back(), lowerthanfive, textureManager, soundManager);
 
     if (temp.getValue() == -1) {
         // No card played (or invalid), exit loop
@@ -135,12 +119,21 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
     pile.push_back(temp);
 
     if (temp.getValue() == 2) {
-        cout << "Power Card 2 Played, Play Another Card" << endl;
-        p.ShowNotification("Power Card 2 Played, Play Another Card");
-        drawCard(p, cardDeck);
-        drawCard(p, cardDeck);
-        continue; // Allow another card to be played
+    cout << "Power Card 2 Played, Play Another Card" << endl;
+    p.ShowNotification("Power Card 2 Played, Play Another Card");
+
+    drawCard(p, cardDeck);
+    drawCard(p, cardDeck);
+
+    if (!p.hasPlayableCard(pile.back(), lowerthanfive)) {
+        cout << "No playable card after drawing, ending turn." << endl;
+        p.ShowNotification("No playable card after drawing, ending turn.");
+        break; // Prevent infinite loop of no playable card
     }
+
+    continue; // Allow another card to be played
+}
+
 
     if (temp.getValue() == 10) {
         cout << "Pile is Burned" << endl;
@@ -165,7 +158,10 @@ void checkHandagainstPile(Player &p, vector<Card> &pile){
     break;
 }
 
+   if (!p.hasAnyCard() && p.gethasSeenBlinds()) {
     p.PickSeenBlinds();
+}
+
 }
 }
 
@@ -179,10 +175,10 @@ void gameloop(){
 
     // Process one player's turn per frame
     if (!WindowShouldClose() &&
-        (user.hasAnyCard() || !user.blindCardsUsed()) &&
-        (bot1.hasAnyCard() || !bot1.blindCardsUsed()) &&
-        (bot2.hasAnyCard() || !bot2.blindCardsUsed()) &&
-        (bot3.hasAnyCard() || !bot3.blindCardsUsed())) {
+        !isOutOfCards(user) &&
+        !isOutOfCards(bot1) &&
+        !isOutOfCards(bot2) &&
+        !isOutOfCards(bot3)) {
 
         // Process the current player's turn
         Player* currentPlayer = turnOrder[index];

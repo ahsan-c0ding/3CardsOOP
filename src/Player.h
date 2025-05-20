@@ -5,6 +5,7 @@
 #include "Card.h"
 #include "Deck.h"
 #include "Texture.h"
+#include "Sound.h"
 
 using namespace std;
 
@@ -23,6 +24,7 @@ class Player{
     float notificationStartTime = 0.0f;
     float notificationDuration = 2.0f; // show for 2 seconds
     bool move_sucess;
+    bool hasSeenBlinds;
 
     public:
     Player(string NameP = "User", bool flag = false){
@@ -45,6 +47,15 @@ class Player{
     }
     bool getIsBot(){
         return isBot;
+    }
+
+    bool gethasSeenBlinds(){
+        if(Seenblind.size()==0){
+            hasSeenBlinds = false;
+        } else {
+            hasSeenBlinds = true;
+        }
+        return hasSeenBlinds;
     }
 
     string getName(){
@@ -170,7 +181,7 @@ class Player{
         }
     }
 
-    virtual Card PlayCard(Card& topcard, bool& lowerthanfive, TextureManager& textureManager) {
+    virtual Card PlayCard(Card& topcard, bool& lowerthanfive, TextureManager& textureManager, SoundManager& soundManager) {
     move_sucess = false;
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -231,17 +242,26 @@ class Player{
                     string c = selected.Convert();
                     ShowNotification(Name+ " Card Removed: "+c);
                     move_sucess = true;
+                    soundManager.playSucess();
 
                     if (lowerthanfive) lowerthanfive = false;
                     EndDrawing();
                     return selected;
-                } else {
-                    DrawText("Invalid move!", 20, 80, 20, RED);
+                } else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), cardRect)) {
+                    // Only wait *after* clicking an invalid card
+                    ShowNotification("Invalid move!");
+                    soundManager.playFail();
                     move_sucess = false;
+                    DrawNotification();
+                    EndDrawing();
+                    WaitTime(1.5);
+                    continue;
                 }
             }
         }
         DrawNotification();
+    
+
         EndDrawing();
     }
 
