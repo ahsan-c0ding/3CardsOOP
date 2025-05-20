@@ -15,7 +15,7 @@ class Deck{
     public:
 
     Deck(){
-        char suits[] = {'H', 'S', 'D', 'C'};
+        char suits[] = {'H','C','S','D'};
         for(char suit : suits){
             for(int i = 2; i < 15; i++){
                 cards.push_back(Card(i, suit));

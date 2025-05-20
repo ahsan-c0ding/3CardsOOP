@@ -17,35 +17,31 @@ class Card{
 
     string Convert(){
         string num;
-        bool isSpace = false; //for formatting purposes only
         if(Value == 14){
-            num = "Ace";
-            isSpace = true;
+            num = "A";
         }
         else if(Value == 11){
-            num = "Jack";
-            isSpace = true;
+            num = "J";
         }
 
         else if(Value == 12){
-            num = "Queen";
-            isSpace = true;
+            num = "Q";
         }
         
         else if(Value == 13){
-            num = "King";
-            isSpace = true;
+            num = "K";
         }
 
         else{
             num = to_string(Value);
         }
-        if(isSpace){
-            return num + " " + House;
-        } else {
-            return num + House;
-        }
+           return num + House;
+    
         
+    }
+
+    int getValue(){
+        return Value;
     }
 
     bool isGreater(Card& other){
