@@ -1,3 +1,7 @@
+[![Video Showcase](https://img.youtube.com/vi/CpgqlQ2xQfM/hqdefault.jpg)](https://www.youtube.com/watch?v=CpgqlQ2xQfM)
+
+
+
 # 🃏 Teen Patti - C++ Card Game
 
 A graphical version of the popular Pakistani card game **Teen Patti**, built in **C++** using the **Raylib** library for frontend. Play against 3 bot opponents in a simple turn-based system with power card mechanics and pile logic.
