@@ -79,7 +79,7 @@ void ShowTutorial() {
     BeginDrawing();
     ClearBackground(RAYWHITE);
     DrawText("Teen Patti Tutorial", 50, 50, 30, DARKBLUE);
-    DrawText("1. Each player is dealt 3 cards initially.", 50, 120, 20, BLACK);
+    DrawText("1. Each player is dealt 3 cards in-hand initially.", 50, 120, 20, BLACK);
     DrawText("2. You play cards in turns onto the pile.", 50, 150, 20, BLACK);
     DrawText("3. Match or beat the top card, or pick up the pile.", 50, 180, 20, BLACK);
     DrawText("4. Special Cards:\n   - 2: Play Again\n   - 5: Reverse & Lower than 5\n   - 10: Burn Pile", 50, 210, 20, DARKGRAY);
