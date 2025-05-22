@@ -29,8 +29,68 @@ Card nullcard(-1,'X');
 bool ReverseOrder = false;
 bool lowerthanfive = false;
 
+const int MENU = 0;
+const int PLAYING = 1;
+const int TUTORIAL = 2;
+const int EXIT = -1;
+
+int currentGameState = MENU;
 
 
+void ShowMainMenu() {
+    BeginDrawing();
+    ClearBackground(DARKGREEN);
+
+    DrawText("Teen Patti", screenWidth / 2 - 100, 100, 40, GOLD);
+
+    // Define button rectangles
+    Rectangle playButton = { screenWidth / 2 - 100, 200, 200, 40 };
+    Rectangle tutorialButton = { screenWidth / 2 - 100, 260, 200, 40 };
+    Rectangle exitButton = { screenWidth / 2 - 100, 320, 200, 40 };
+
+    // Get mouse position
+    Vector2 mousePos = GetMousePosition();
+
+    // Draw buttons with hover effect
+    DrawRectangleRec(playButton, CheckCollisionPointRec(mousePos, playButton) ? DARKGRAY : GRAY);
+    DrawText("Play", playButton.x + 70, playButton.y + 10, 20, WHITE);
+
+    DrawRectangleRec(tutorialButton, CheckCollisionPointRec(mousePos, tutorialButton) ? DARKGRAY : GRAY);
+    DrawText("Tutorial", tutorialButton.x + 55, tutorialButton.y + 10, 20, WHITE);
+
+    DrawRectangleRec(exitButton, CheckCollisionPointRec(mousePos, exitButton) ? DARKGRAY : GRAY);
+    DrawText("Exit Game", exitButton.x + 50, exitButton.y + 10, 20, WHITE);
+
+    EndDrawing();
+
+    // Handle mouse input
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (CheckCollisionPointRec(mousePos, playButton)) {
+            currentGameState = PLAYING;
+        } else if (CheckCollisionPointRec(mousePos, tutorialButton)) {
+            currentGameState = TUTORIAL;
+        } else if (CheckCollisionPointRec(mousePos, exitButton)) {
+            currentGameState = EXIT;
+        }
+    }
+}
+
+void ShowTutorial() {
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    DrawText("Teen Patti Tutorial", 50, 50, 30, DARKBLUE);
+    DrawText("1. Each player is dealt 3 cards initially.", 50, 120, 20, BLACK);
+    DrawText("2. You play cards in turns onto the pile.", 50, 150, 20, BLACK);
+    DrawText("3. Match or beat the top card, or pick up the pile.", 50, 180, 20, BLACK);
+    DrawText("4. Special Cards:\n   - 2: Play Again\n   - 5: Reverse & Lower than 5\n   - 10: Burn Pile", 50, 210, 20, DARKGRAY);
+    DrawText("5. Once your hand and deck is empty, pick up the blind cards!.", 50, 300, 20, BLACK);
+    DrawText("Click anywhere or press BACKSPACE to return to the menu.", 50, 340, 20, MAROON);
+    EndDrawing();
+
+    if (IsKeyPressed(KEY_BACKSPACE) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        currentGameState = MENU;
+    }
+}
 
 
 void drawCard(Player& p, Deck& d){
@@ -212,31 +272,36 @@ void gameloop(){
 
 
 
-int main(){
-    cout << "Hello World!" << endl;
-
-    // Initialization
+int main() {
     SetTargetFPS(60);
     InitWindow(screenWidth, screenHeight, "Teen Patti");
     InitAudioDevice();
-    SetMasterVolume(1.0f);  // Full volume
-    soundManager.Load();
+    SetMasterVolume(1.0f);
 
+    soundManager.Load();
     textureManager.LoadCardTextures("cards/");
 
-    initialiseGame();  // Initial card distribution, game setup
-    cout << endl;
+    while (!WindowShouldClose() && currentGameState != EXIT) {
+        if (currentGameState == MENU) {
+            ShowMainMenu();
+        } 
+        else if (currentGameState == TUTORIAL) {
+            ShowTutorial();
+        } 
+        else if (currentGameState == PLAYING) {
+            initialiseGame();
 
-    // Main Game Loop
-    while (!WindowShouldClose()) {
+            while (!WindowShouldClose()) {
+                gameloop();
+            }
 
-        gameloop();  // One player's turn per frame
-
+            currentGameState = EXIT;
+        }
     }
 
     soundManager.Unload();
     CloseAudioDevice();
-    CloseWindow();  // Close the window when done
+    CloseWindow();
 
     return 0;
 }
